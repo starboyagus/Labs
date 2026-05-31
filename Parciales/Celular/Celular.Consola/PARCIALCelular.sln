@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37216.2 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Celular.Consola", "Celular.Consola.csproj", "{09E8D768-5596-4BB1-97F9-C556BC55EB13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Celular.Dominio", "..\Celuar.Dominio\Celular.Dominio.csproj", "{A47F30F9-0FE4-48FE-9AC9-C122E7F43F31}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{09E8D768-5596-4BB1-97F9-C556BC55EB13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09E8D768-5596-4BB1-97F9-C556BC55EB13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09E8D768-5596-4BB1-97F9-C556BC55EB13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09E8D768-5596-4BB1-97F9-C556BC55EB13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A47F30F9-0FE4-48FE-9AC9-C122E7F43F31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A47F30F9-0FE4-48FE-9AC9-C122E7F43F31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A47F30F9-0FE4-48FE-9AC9-C122E7F43F31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A47F30F9-0FE4-48FE-9AC9-C122E7F43F31}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B80EB94D-564F-47EF-9644-3455F84DAB02}
+	EndGlobalSection
+EndGlobal
