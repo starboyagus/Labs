@@ -1,4 +1,5 @@
-﻿namespace Celular.Dominio { 
+﻿namespace AgustinGil.Dominio
+{
     public abstract class Dispositivo
     {
         public string NroSerie { get; set; }
@@ -16,4 +17,3 @@
         }
     }
 }
-
