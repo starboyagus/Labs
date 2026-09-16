@@ -1,0 +1,153 @@
+@page "/alquileres"
+@rendermode InteractiveServer
+@using Fiorini.Dominio
+@using Fiorini.Negocio
+@inject AlquilerNegocio Negocio
+@inject NavigationManager Navegacion
+@inject IJSRuntime JS
+
+<PageTitle>Alquileres</PageTitle>
+
+<h1>Alquileres</h1>
+
+@* 4.a: control tipo lista con los valores pre-seteados y botón que ejecuta el filtro *@
+<div class="row g-2 align-items-end mb-3">
+    <div class="col-auto">
+        <label class="form-label" for="estado">Estado</label>
+        <select id="estado" class="form-select" @bind="estadoSeleccionado">
+            @foreach (var estado in EstadoAlquiler.Todos)
+            {
+                <option value="@estado">@estado</option>
+            }
+        </select>
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-primary" @onclick="BuscarAsync" disabled="@cargando">Buscar</button>
+    </div>
+    <div class="col text-end">
+        @* 4.b: botón "Agregar" que llama a la pantalla de alta *@
+        <button class="btn btn-success" @onclick="IrAlAlta">Agregar</button>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(mensajeError))
+{
+    <div class="alert alert-danger" role="alert">@mensajeError</div>
+}
+
+@if (!string.IsNullOrEmpty(mensajeExito))
+{
+    <div class="alert alert-success" role="alert">@mensajeExito</div>
+}
+
+@if (cargando)
+{
+    <p><em>Cargando...</em></p>
+}
+else if (alquileres.Count == 0)
+{
+    <p class="text-muted">No hay alquileres en estado <strong>@estadoMostrado</strong>.</p>
+}
+else
+{
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Inquilino</th>
+                <th class="text-end">Monto</th>
+                <th>Fecha inicio</th>
+                <th>Fecha fin</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var alquiler in alquileres)
+            {
+                <tr>
+                    <td>@alquiler.Id</td>
+                    <td>@alquiler.Inquilino</td>
+                    <td class="text-end">@alquiler.MontoAlquiler.ToString("N2")</td>
+                    <td>@alquiler.FechaInicio.ToString("dd/MM/yyyy")</td>
+                    <td>@alquiler.FechaFin.ToString("dd/MM/yyyy")</td>
+                    <td>
+                        <span class="badge @(alquiler.Estado == EstadoAlquiler.Activo ? "bg-success" : "bg-secondary")">
+                            @alquiler.Estado
+                        </span>
+                    </td>
+                    <td class="text-end">
+                        @* 4.c: posibilidad de finalizar un alquiler desde el listado *@
+                        @if (alquiler.Estado == EstadoAlquiler.Activo)
+                        {
+                            <button class="btn btn-outline-danger btn-sm" @onclick="() => FinalizarAsync(alquiler)">Finalizar</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p class="text-muted">@alquileres.Count alquiler(es) en estado @estadoMostrado</p>
+}
+
+@code {
+    private List<Alquiler> alquileres = new();
+    private string estadoSeleccionado = EstadoAlquiler.Activo;
+    private string estadoMostrado = EstadoAlquiler.Activo;
+    private bool cargando;
+    private string? mensajeError;
+    private string? mensajeExito;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await BuscarAsync();
+    }
+
+    /// <summary>Consume el servicio de búsqueda por estado y actualiza el listado.</summary>
+    private async Task BuscarAsync()
+    {
+        cargando = true;
+        mensajeError = null;
+        mensajeExito = null;
+
+        try
+        {
+            alquileres = await Negocio.ObtenerPorEstadoAsync(estadoSeleccionado);
+            estadoMostrado = estadoSeleccionado;
+        }
+        catch (Exception ex)
+        {
+            alquileres = new();
+            mensajeError = "No se pudo obtener el listado. Verifique que la API esté en ejecución. " + ex.Message;
+        }
+        finally
+        {
+            cargando = false;
+        }
+    }
+
+    private void IrAlAlta()
+    {
+        Navegacion.NavigateTo("alquileres/alta");
+    }
+
+    private async Task FinalizarAsync(Alquiler alquiler)
+    {
+        var confirmado = await JS.InvokeAsync<bool>("confirm",
+            $"¿Desea finalizar el alquiler N° {alquiler.Id} de {alquiler.Inquilino}?");
+
+        if (!confirmado)
+            return;
+
+        try
+        {
+            await Negocio.FinalizarAsync(alquiler.Id);
+            await BuscarAsync();
+            mensajeExito = $"El alquiler N° {alquiler.Id} fue finalizado correctamente.";
+        }
+        catch (Exception ex)
+        {
+            mensajeError = ex.Message;
+        }
+    }
+}
